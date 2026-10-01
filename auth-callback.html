@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Authenticating...</title>
+</head>
+<body>
+    <p>Connecting back to extension... You can close this window if it doesn't close automatically.</p>
+    <script>
+        // Extract tokens from the URL hash (#access_token=...)
+        const hash = window.location.hash;
+        
+        if (hash) {
+            // Send the hash payload back to your extension via a Custom Event or BroadcastChannel
+            // If the extension opens this in a tab, you can use runtime messaging:
+            chrome.runtime.sendMessage("blendpoint...", { type: "SUPABASE_AUTH_HASH", hash: hash });
+        }
+        
+        // Alternative fallback: Close window if loaded directly
+        setTimeout(() => window.close(), 1000);
+    </script>
+</body>
+</html>
