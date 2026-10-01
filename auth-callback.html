@@ -1,22 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Authenticating...</title>
 </head>
 <body>
     <p>Connecting back to extension... You can close this window if it doesn't close automatically.</p>
+    
     <script>
-        // Extract tokens from the URL hash (#access_token=...)
-        const hash = window.location.hash;
+        // 1. Get the hash fragment containing access_token and refresh_token
+        const hashPayload = window.location.hash;
         
-        if (hash) {
-            // Send the hash payload back to your extension via a Custom Event or BroadcastChannel
-            // If the extension opens this in a tab, you can use runtime messaging:
-            chrome.runtime.sendMessage("blendpoint...", { type: "SUPABASE_AUTH_HASH", hash: hash });
+        if (hashPayload) {
+            // Your persistent MV2 extension ID from manifest.json (browser_specific_settings.gecko.id)
+            const EXTENSION_ID = "blendpoint..."; 
+            
+            try {
+                // 2. Broadcast directly to your background script using the explicit ID
+                chrome.runtime.sendMessage(EXTENSION_ID, { 
+                    type: "SUPABASE_AUTH_HASH", 
+                    hash: hashPayload 
+                });
+                console.log("Auth payload sent successfully to extension.");
+            } catch (err) {
+                console.error("Failed to communicate with extension. Ensure externally_connectable is set.", err);
+            }
+        } else {
+            console.warn("No auth hash found in the URL.");
         }
         
-        // Alternative fallback: Close window if loaded directly
-        setTimeout(() => window.close(), 1000);
+        // 3. Optional auto-close comfort step
+        setTimeout(() => {
+            window.close();
+        }, 1500);
     </script>
 </body>
 </html>
