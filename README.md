@@ -1,0 +1,1 @@
+# supabase-redirect-simple-html
